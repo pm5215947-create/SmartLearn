@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#18234b">
+<title>SmartLearn — Exam Prep</title>
+<style>
+:root{--navy:#18234b;--blue:#4263eb;--ink:#172033;--muted:#68738a;--bg:#f4f6fb;--line:#e5e9f2;--green:#16845b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,#18234b,#354da2);color:#fff;padding:26px 20px 30px;border-radius:0 0 26px 26px}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:auto}.brand{font-weight:800;letter-spacing:.2px;font-size:19px}.pill{font-size:12px;background:#ffffff22;border:1px solid #ffffff44;padding:6px 10px;border-radius:20px}
+.hero{max-width:900px;margin:24px auto 0}.hero small{color:#cbd5ff;font-weight:700;text-transform:uppercase;letter-spacing:1.3px}.hero h1{font-size:30px;line-height:1.12;margin:8px 0}.hero p{color:#e0e6ff;margin:8px 0 0;max-width:520px}
+main{max-width:900px;margin:0 auto;padding:20px 16px 90px}.section-head{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px}.section-head h2{font-size:18px;margin:0}.muted{color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-2px}.stat,.card,.subject,.lesson,.question{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:0 4px 16px #17203308}.stat b{display:block;font-size:22px;color:var(--navy)}.stat span{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.subject{cursor:pointer;text-align:left;color:inherit}.subject .emoji{font-size:25px}.subject b{display:block;margin:7px 0 2px}.subject small{color:var(--muted)}
+.btn{border:0;border-radius:12px;background:var(--blue);color:#fff;padding:12px 16px;font-weight:700;font-size:14px;cursor:pointer}.btn.secondary{background:#edf1ff;color:#2d49c7}.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.lesson{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.lesson b{display:block}.lesson small{color:var(--muted)}
+.progress{height:9px;background:#e9edf5;border-radius:10px;overflow:hidden;margin:10px 0}.progress i{display:block;height:100%;background:#24a477;width:0}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;gap:5px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:5}
+nav button{border:0;background:transparent;color:var(--muted);font-size:12px;padding:8px 12px;border-radius:10px;cursor:pointer}nav button.active{background:#edf1ff;color:#2948c8;font-weight:800}
+.view{display:none}.view.active{display:block}.tag{display:inline-block;background:#eef2ff;color:#334dbb;border-radius:20px;padding:4px 9px;font-size:11px;font-weight:700}
+.option{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;margin:9px 0;cursor:pointer;color:var(--ink)}.option.selected{border:2px solid var(--blue);background:#f2f5ff}.option.correct{border-color:var(--green);background:#effaf5}.option.wrong{border-color:#d34b4b;background:#fff4f4}
+.notice{background:#fff8e8;border:1px solid #f2dfb5;border-radius:13px;padding:12px;font-size:13px;color:#72551c;margin:14px 0}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}.hero h1{font-size:38px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand">✦ SmartLearn</div><div class="pill">EXAM PREP • FIRST VERSION</div></div>
+<div class="hero"><small>Your next grade starts here</small><h1>Learn smarter.<br>Prepare with confidence.</h1><p>Short lessons, practice questions and progress tracking — all in one place.</p></div></header>
+<main>
+<section id="home" class="view active">
+ <div class="section-head"><h2>Your study snapshot</h2><span class="muted">Saved on this device</span></div>
+ <div class="stats"><div class="stat"><b id="statDone">0</b><span>Questions tried</span></div><div class="stat"><b id="statCorrect">0%</b><span>Accuracy</span></div><div class="stat"><b id="statSubjects">0</b><span>Subjects practised</span></div></div>
+ <div class="section-head"><h2>Choose a subject</h2><span class="muted">Explore all</span></div>
+ <div class="grid" id="subjectGrid"></div>
+ <div class="section-head"><h2>Keep your streak going</h2></div>
+ <div class="card"><b>Small steps add up.</b><p class="muted">Try a 5-question practice session today. Your results are saved on this device.</p><button class="btn" onclick="startQuiz('Mathematics')">Start a quick practice</button></div>
+ <div class="notice">Demo content: these are original sample questions, not official past examination questions. Check your exam board's syllabus and use approved materials for final preparation.</div>
+</section>
+<section id="learn" class="view">
+ <div class="section-head"><h2>Learning library</h2><span class="tag">Starter lessons</span></div>
+ <div id="lessonList"></div>
+ <div class="notice">Lesson notes are starter placeholders. The next build step is to add reviewed notes and video lessons for your chosen exam syllabus.</div>
+</section>
+<section id="practice" class="view">
+ <div class="section-head"><h2>Practice centre</h2><span class="muted">Original sample questions</span></div>
+ <p class="muted">Choose a subject to begin a short quiz and get instant feedback.</p>
+ <div class="grid" id="practiceGrid"></div>
+ <div id="quizArea"></div>
+</section>
+<section id="progress" class="view">
+ <div class="section-head"><h2>Your progress</h2></div>
+ <div class="card"><div class="row" style="justify-content:space-between"><b>Overall accuracy</b><b id="progressPct">0%</b></div><div class="progress"><i id="progressBar"></i></div><p class="muted" id="progressText">Complete a practice quiz to see your progress.</p></div>
+ <div class="section-head"><h2>Subject activity</h2></div><div id="subjectProgress"></div>
+ <button class="btn ghost" onclick="resetProgress()">Reset demo progress</button>
+</section>
+</main>
+<nav><button class="active" data-view="home">⌂ Home</button><button data-view="learn">▤ Learn</button><button data-view="practice">✎ Practice</button><button data-view="progress">▥ Progress</button></nav>
+<footer>SmartLearn prototype • Built to test the learning experience</footer>
+<script>
+const subjects=[
+ {name:'Mathematics',emoji:'➗',desc:'Numbers, algebra & geometry'},
+ {name:'English',emoji:'📘',desc:'Grammar, writing & reading'},
+ {name:'Integrated Science',emoji:'🔬',desc:'Biology, chemistry & physics'},
+ {name:'Social Studies',emoji:'🌍',desc:'People, society & citizenship'},
+ {name:'ICT',emoji:'💻',desc:'Digital and computer skills'},
+ {name:'Economics',emoji:'📈',desc:'Markets and decision-making'},
+ {name:'Biology',emoji:'🧬',desc:'Living things and systems'},
+ {name:'Chemistry',emoji:'⚗️',desc:'Matter and reactions'}
+];
+const bank={
+ 'Mathematics':[
+  {q:'What is 15% of 200?',o:['15','20','30','45'],a:2,why:'15% = 0.15, and 0.15 × 200 = 30.'},
+  {q:'Solve: 3x + 5 = 20.',o:['x = 3','x = 5','x = 7','x = 15'],a:1,why:'Subtract 5 to get 3x = 15, then divide by 3: x = 5.'},
+  {q:'What is the area of a rectangle 8 cm long and 4 cm wide?',o:['12 cm²','24 cm²','32 cm²','64 cm²'],a:2,why:'Area = length × width = 8 × 4 = 32 cm².'}
+ ],
+ 'English':[
+  {q:'Choose the correctly punctuated sentence.',o:['Where are you going.','Where are you going?','Where are you going,','Where are you going!'],a:1,why:'A direct question ends with a question mark.'},
+  {q:'Which word is closest in meaning to “rapid”?',o:['Slow','Quick','Quiet','Careful'],a:1,why:'“Rapid” means fast or quick.'}
+ ],
+ 'Integrated Science':[
+  {q:'Which process do green plants use to make food?',o:['Respiration','Photosynthesis','Digestion','Fermentation'],a:1,why:'Photosynthesis uses light energy to make glucose from carbon dioxide and water.'},
+  {q:'What is the SI unit of force?',o:['Joule','Watt','Newton','Pascal'],a:2,why:'Force is measured in newtons (N).'}
+ ],
+ 'Social Studies':[
+  {q:'Which is an example of a civic responsibility?',o:['Destroying public property',' obeying lawful rules','Avoiding all community work','Ignoring public health guidance'],a:1,why:'Respecting lawful rules is part of responsible citizenship.'}
+ ],
+ 'ICT':[
+  {q:'Which component is commonly called the “brain” of a computer?',o:['Monitor','Keyboard','CPU','Mouse'],a:2,why:'The CPU executes instructions and coordinates processing.'}
+ ],
+ 'Economics':[
+  {q:'What usually happens to quantity demanded when price falls, other things equal?',o:['It decreases','It increases','It becomes zero','It never changes'],a:1,why:'The law of demand states that lower prices generally increase quantity demanded, other things equal.'}
+ ],
+ 'Biology':[
+  {q:'Which cell structure contains most of the genetic material in a typical human cell?',o:['Cell wall','Nucleus','Ribosome','Cell membrane'],a:1,why:'The nucleus contains most of the cell’s DNA.'}
+ ],
+ 'Chemistry':[
+  {q:'What is the chemical symbol for sodium?',o:['So','S','Na','N'],a:2,why:'The chemical symbol for sodium is Na.'}
+ ]
+};
+let state=JSON.parse(localStorage.getItem('smartlearn-progress')||'{"attempted":0,"correct":0,"bySubject":{}}');
+let current=null, chosen=null;
+function save(){localStorage.setItem('smartlearn-progress',JSON.stringify(state));renderStats()}
+function renderStats(){
+ document.getElementById('statDone').textContent=state.attempted;
+ document.getElementById('statCorrect').textContent=state.attempted?Math.round(state.correct/state.attempted*100)+'%':'0%';
+ document.getElementById('statSubjects').textContent=Object.keys(state.bySubject).length;
+ document.getElementById('progressPct').textContent=state.attempted?Math.round(state.correct/state.attempted*100)+'%':'0%';
+ document.getElementById('progressBar').style.width=(state.attempted?state.correct/state.attempted*100:0)+'%';
+ document.getElementById('progressText').textContent=state.attempted?`${state.correct} correct answers out of ${state.attempted} attempts.`:'Complete a practice quiz to see your progress.';
+ document.getElementById('subjectProgress').innerHTML=subjects.map(s=>{let x=state.bySubject[s.name]||{a:0,c:0};return `<div class="lesson"><div><b>${s.emoji} ${s.name}</b><small>${x.a} attempted · ${x.a?Math.round(x.c/x.a*100):0}% accuracy</small></div><span class="tag">${x.c}/${x.a}</span></div>`}).join('');
+}
+function subjectCards(target){document.getElementById(target).innerHTML=subjects.map(s=>`<button class="subject" onclick="startQuiz('${s.name}')"><span class="emoji">${s.emoji}</span><b>${s.name}</b><small>${s.desc}</small></button>`).join('')}
+function renderLessons(){document.getElementById('lessonList').innerHTML=subjects.slice(0,6).map(s=>`<div class="lesson"><div><b>${s.emoji} ${s.name}</b><small>Topic outline · Notes and examples coming next</small></div><button class="btn secondary" onclick="startQuiz('${s.name}')">Practise</button></div>`).join('')}
+function show(view){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===view));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='progress')renderStats()}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
+function startQuiz(name){let list=bank[name]||[];current={name,questions:list,index:0,score:0};chosen=null;show('practice');renderQuestion()}
+function renderQuestion(){
+ const area=document.getElementById('quizArea');if(!current)return;
+ if(current.index>=current.questions.length){area.innerHTML=`<div class="card"><span class="tag">Quiz complete</span><h2>${current.name}</h2><h1>${current.score}/${current.questions.length}</h1><p>You answered ${current.score} correctly.</p><button class="btn" onclick="startQuiz('${current.name}')">Try again</button> <button class="btn ghost" onclick="show('progress')">View progress</button></div>`;return}
+ const q=current.questions[current.index];chosen=null;
+ area.innerHTML=`<div class="section-head"><h2>${current.name}</h2><span class="muted">Question ${current.index+1} of ${current.questions.length}</span></div><div class="question"><div class="progress"><i style="width:${current.index/current.questions.length*100}%"></i></div><h3>${q.q}</h3><div id="options">${q.o.map((o,i)=>`<button class="option" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><div id="feedback"></div><button class="btn" id="checkBtn" disabled>Check answer</button> <button class="btn secondary" id="nextBtn" style="display:none">Next question</button></div>`;
+ document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');chosen=Number(b.dataset.i);document.getElementById('checkBtn').disabled=false}));
+ document.getElementById('checkBtn').addEventListener('click',checkAnswer);
+ document.getElementById('nextBtn').addEventListener('click',()=>{current.index++;renderQuestion()});
+}
+function checkAnswer(){
+ if(chosen===null)return;let q=current.questions[current.index],ok=chosen===q.a;
+ state.attempted++;if(ok){state.correct++;current.score++}
+ let x=state.bySubject[current.name]||{a:0,c:0};x.a++;if(ok)x.c++;state.bySubject[current.name]=x;save();
+ document.querySelectorAll('.option').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong')});
+ document.getElementById('feedback').innerHTML=`<p><b>${ok?'Well done!':'Not quite.'}</b> ${q.why}</p>`;
+ document.getElementById('checkBtn').style.display='none';document.getElementById('nextBtn').style.display='inline-block';
+}
+function resetProgress(){if(confirm('Clear all saved demo progress on this device?')){state={attempted:0,correct:0,bySubject:{}};save();renderStats()}}
+subjectCards('subjectGrid');subjectCards('practiceGrid');renderLessons();renderStats();
+</script>
+</body></html>
